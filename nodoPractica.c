@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 // ESTRUCTURAS
 struct tarea
@@ -22,11 +23,18 @@ TNodo *CrearListaVacia();
 TNodo *CrearNodo(int tareaId, char *descripcion, int duracion);
 void InsertarNodo(TNodo **start, TNodo *nodo);
 void CargarTareas(TNodo **start);
+void MostrarNodo(TNodo *nodo);
+void MostrarLista(TNodo **start);
 
 int main()
 {
+    //LISTA 1: TAREAS PENDIENTES
     TNodo *start1 = CrearListaVacia();
     CargarTareas(&start1);
+    MostrarLista(&start1);
+
+    //LISTA 2: TAREAS REALIZADAS
+    TNodo *start2 = CrearListaVacia();
 
     return 0;
 }
@@ -53,9 +61,31 @@ void InsertarNodo(TNodo **start, TNodo *nodo)
     *start = nodo;
 }
 
+void MostrarNodo(TNodo *nodo)
+{
+    if (nodo != NULL)
+    {
+        printf("Tarea ID = %d\n", nodo->t.tareaId);
+        printf("Descripcion = %s\n", nodo->t.descripcion);
+        printf("Duracion = %d\n", nodo->t.duracion);
+        printf("\n");
+    }
+}
+
+void MostrarLista(TNodo **start)
+{
+    printf("\t-----Nodos-----\n");
+    TNodo *aux = *start;
+    while (aux) // es lo mismo que aux != NULL
+    {
+        MostrarNodo(aux);
+        aux = aux->siguiente;
+    }
+}
+
 void CargarTareas(TNodo **start)
 {
-    int tareaId = 1000; 
+    int tareaId = 1000;
     char descripcion[100];
     int duracion;
     char opcion;
