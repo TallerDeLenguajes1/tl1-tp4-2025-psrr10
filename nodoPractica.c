@@ -27,6 +27,10 @@ void MostrarNodo(TNodo *nodo);
 void MostrarLista(TNodo **start);
 void TransferirTareas(TNodo **pendientes, TNodo **realizadas);
 void BuscarTareas(TNodo *pendientes, TNodo *realizadas);
+TNodo *QuitarNodo(TNodo **start, int tareaId);
+void EliminarNodo(TNodo *nodo);
+void LiberarLista(TNodo **start);
+
 
 // MAIN
 int main()
@@ -46,6 +50,9 @@ int main()
     MostrarLista(&start2);
 
     BuscarTareas(start1,start2);
+
+    LiberarLista(&start1);
+    LiberarLista(&start2);
 
     return 0;
 }
@@ -279,3 +286,39 @@ void BuscarTareas(TNodo *pendientes, TNodo *realizadas)
     }
 }
 
+TNodo *QuitarNodo(TNodo **start, int tareaId)
+{
+    TNodo **aux = start;
+    while (*aux != NULL && (*aux)->t.tareaId != tareaId)
+    {
+        aux = &(*aux)->siguiente;
+    }
+
+    if (*aux != NULL)
+    {
+        TNodo *nodoQuitado = *aux;
+        *aux = (*aux)->siguiente;
+        nodoQuitado->siguiente = NULL;
+        return nodoQuitado;
+    }
+
+    return NULL;
+}
+
+void EliminarNodo(TNodo *nodo)
+{
+    if (nodo != NULL)
+    {
+        free(nodo->t.descripcion); // Liberar memoria de la descripción
+        free(nodo);                // Liberar memoria del nodo
+    }
+}
+
+void LiberarLista(TNodo **start)
+{
+    while (*start != NULL)
+    {
+        TNodo *nodoEliminado = QuitarNodo(start, (*start)->t.tareaId);
+        EliminarNodo(nodoEliminado);
+    }
+}
