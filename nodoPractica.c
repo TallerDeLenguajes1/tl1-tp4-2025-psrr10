@@ -25,20 +25,29 @@ void InsertarNodo(TNodo **start, TNodo *nodo);
 void CargarTareas(TNodo **start);
 void MostrarNodo(TNodo *nodo);
 void MostrarLista(TNodo **start);
+void TransferirTareas(TNodo **start1, TNodo **start2);
 
+// MAIN
 int main()
 {
-    //LISTA 1: TAREAS PENDIENTES
+    // LISTAS 1 Y 2: TAREAS PENDIENTES y REALIZADAS
     TNodo *start1 = CrearListaVacia();
+    TNodo *start2 = CrearListaVacia();
     CargarTareas(&start1);
     MostrarLista(&start1);
 
-    //LISTA 2: TAREAS REALIZADAS
-    TNodo *start2 = CrearListaVacia();
+    TransferirTareas(&start1, &start2);
+
+    printf("Lista de tareas pendientes actualizada:\n");
+    MostrarLista(&start1);
+
+    printf("Lista de tareas realizadas:\n");
+    MostrarLista(&start2);
 
     return 0;
 }
 
+// DESARROLLO DE FUNCIONES
 TNodo *CrearListaVacia()
 {
     return NULL;
@@ -117,4 +126,48 @@ void CargarTareas(TNodo **start)
         fflush(stdin);
         scanf("%c", &opcion); // Espacio para leer correctamente un caracter
     } while (opcion == 's' || opcion == 'S');
+}
+
+void TransferirTareas(TNodo **pendientes, TNodo **realizadas)
+{
+
+    TNodo *actual = *pendientes;
+    TNodo *anterior = NULL;
+    char opcion;
+
+    while (actual != NULL)
+    {
+        printf("\n¿Realizó esta tarea?\n");
+        MostrarNodo(actual);
+        printf("(s/n): ");
+        fflush(stdin);
+        scanf("%c", &opcion);
+
+        if (opcion == 's' || opcion == 'S')
+        {
+            TNodo *tareaRealizada = actual;
+
+            // Eliminar de lista de pendientes
+            if (anterior == NULL)
+            {
+                // El primer nodo fue realizado
+                *pendientes = actual->siguiente;
+            }
+            else
+            {
+                anterior->siguiente = actual->siguiente;
+            }
+
+            // Insertar en lista de realizadas
+            InsertarNodo(realizadas, tareaRealizada);
+
+            // Avanzar
+            actual = (anterior == NULL) ? *pendientes : anterior->siguiente;
+        }
+        else
+        {
+            anterior = actual;
+            actual = actual->siguiente;
+        }
+    }
 }
