@@ -25,7 +25,8 @@ void InsertarNodo(TNodo **start, TNodo *nodo);
 void CargarTareas(TNodo **start);
 void MostrarNodo(TNodo *nodo);
 void MostrarLista(TNodo **start);
-void TransferirTareas(TNodo **start1, TNodo **start2);
+void TransferirTareas(TNodo **pendientes, TNodo **realizadas);
+void BuscarTareas(TNodo *pendientes, TNodo *realizadas);
 
 // MAIN
 int main()
@@ -43,6 +44,8 @@ int main()
 
     printf("Lista de tareas realizadas:\n");
     MostrarLista(&start2);
+
+    BuscarTareas(start1,start2);
 
     return 0;
 }
@@ -171,3 +174,108 @@ void TransferirTareas(TNodo **pendientes, TNodo **realizadas)
         }
     }
 }
+
+
+
+
+void BuscarTareas(TNodo *pendientes, TNodo *realizadas)
+{
+    int opcionBusqueda;
+    printf("\nBuscar tarea por:\n");
+    printf("1. ID\n");
+    printf("2. Palabra clave\n");
+    printf("Ingrese su opción: ");
+    scanf("%d", &opcionBusqueda);
+
+    if (opcionBusqueda == 1)
+    {
+        int id;
+        printf("Ingrese el ID de la tarea a buscar: ");
+        scanf("%d", &id);
+
+        bool encontrada = false;
+
+        // Buscar en pendientes
+        TNodo *aux = pendientes;
+        while (aux != NULL)
+        {
+            if (aux->t.tareaId == id)
+            {
+                printf("\nTarea encontrada en pendientes:\n");
+                MostrarNodo(aux);
+                encontrada = true;
+                break;
+            }
+            aux = aux->siguiente;
+        }
+
+        // Buscar en realizadas
+        aux = realizadas;
+        while (!encontrada && aux != NULL)
+        {
+            if (aux->t.tareaId == id)
+            {
+                printf("\nTarea encontrada en realizadas:\n");
+                MostrarNodo(aux);
+                encontrada = true;
+                break;
+            }
+            aux = aux->siguiente;
+        }
+
+        if (!encontrada)
+        {
+            printf("\nTarea no encontrada.\n");
+        }
+    }
+    else if (opcionBusqueda == 2)
+    {
+        char palabraClave[50];
+        printf("Ingrese palabra clave a buscar: ");
+        fflush(stdin);
+        fgets(palabraClave, sizeof(palabraClave), stdin);
+        palabraClave[strcspn(palabraClave, "\n")] = 0; // Eliminar salto de línea
+
+        bool encontrada = false;
+
+        // Buscar en pendientes
+        TNodo *aux = pendientes;
+        while (aux != NULL)
+        {
+            if (strstr(aux->t.descripcion, palabraClave) != NULL)
+            {
+                if (!encontrada)
+                    printf("\nTareas encontradas en pendientes:\n");
+                
+                MostrarNodo(aux);
+                encontrada = true;
+            }
+            aux = aux->siguiente;
+        }
+
+        // Buscar en realizadas
+        aux = realizadas;
+        while (aux != NULL)
+        {
+            if (strstr(aux->t.descripcion, palabraClave) != NULL)
+            {
+                if (!encontrada)
+                    printf("\nTareas encontradas en realizadas:\n");
+
+                MostrarNodo(aux);
+                encontrada = true;
+            }
+            aux = aux->siguiente;
+        }
+
+        if (!encontrada)
+        {
+            printf("\nNo se encontraron tareas con esa palabra clave.\n");
+        }
+    }
+    else
+    {
+        printf("\nOpción inválida.\n");
+    }
+}
+
